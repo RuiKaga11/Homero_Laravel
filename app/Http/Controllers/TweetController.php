@@ -3,7 +3,7 @@
 namespace app\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\Tweet.php;
+use App\Models\Tweet;
 
 class TweetController extends Controller
 {
@@ -12,10 +12,8 @@ class TweetController extends Controller
      */
     public function index()
     {
-        // $tweets = Tweet::all();
-        // return view('startpage.Tweet', compact('tweets'));
-        $value = 'value';
-        return view('startpage.Tweet', 'value');
+        $tweets = Tweet::all();
+        return view('startpage.Tweet', compact('tweets'));
     }
 
     /**

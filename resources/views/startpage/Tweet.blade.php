@@ -9,12 +9,16 @@
     <body>
 
     <h1>Homero</h1>
-        {{-- <select name="tweets" id="tweets"> --}}
-            <p>{{ 'view' }}</p>
-        {{-- @foreach ($tweets as $tweet)
-            <option value="{{$tweet->id}}">{{$tweet->name}}</option>
-        @endforeach --}}
-        </select>
+    
+    <div class="tweets-container">
+        @foreach ($tweets as $tweet)
+            <div class="tweet-item">
+                <h3>{{ $tweet->name }}</h3>
+                <p>{{ $tweet->content }}</p>
+                <small>投稿日時: {{ $tweet->created_at }}</small>
+            </div>
+        @endforeach
+    </div>
 
 </body>
 </html>
