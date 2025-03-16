@@ -1,0 +1,26 @@
+{
+    "res":{
+        "tweets":[
+            {"id":1,"text":"aaaa","user_id":1},
+            {"id":2,"text":"bbbb","user_id":2}
+        ]
+    }
+}
+
+
+
+{
+    "res":{
+        "id":1,
+        "text":"aaaa",
+        "user_id":1
+    }
+}
+
+{
+    "text":"aaaaa"
+}
+
+{
+    "text":""
+}

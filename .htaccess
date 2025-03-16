@@ -1,0 +1,3 @@
+# AccessControl Extension
+# PHPの拡張子変更
+AddType application/x-httpd-php .html

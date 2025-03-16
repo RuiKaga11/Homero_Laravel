@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+p{
+    margin: 0;
+}
+
+button#nice{
+    border-radius: 10px;
+    border: solid;
+    border-color: #CCCCCC;
+}
+
+button#nice:hover{
+    background-color:#FFD5EC;
+    border-color: #FFBEDA;
+
+    border-radius: 10px;
+}
+

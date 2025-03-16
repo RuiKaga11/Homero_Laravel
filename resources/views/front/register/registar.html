@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>homero_登録</title>
+
+    <meta charset="utf-8" />
+  </head>
+  <body>
+
+    <h1>Homero登録ページ</h1>
+    <form action="php\controler\register.php" method="post">
+        <div>
+            <label for="name">ユーザID</label>
+            <input type="text" id="name" name="userName">
+        </div>
+        <div>
+          <label for="email">メールアドレス</label>
+          <input type="text" id="email" name="email">
+        </div>
+        <div>
+            <label for="pass">パスワード</label>
+            <input type="text" id="pass" name="pass">
+        </div>
+        <input type="submit" value="登録">
+    </form>
+    <p><a href="index.html">スタートページ</a></p>
+  </body>
+</html>
+
