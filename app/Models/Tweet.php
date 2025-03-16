@@ -11,4 +11,10 @@ class Tweet extends Model
     protected $table = 'tweets';
     public $timestamps = false;
     use HasFactory;
+
+    // ユーザーとのリレーションを定義
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

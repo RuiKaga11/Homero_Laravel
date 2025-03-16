@@ -15,15 +15,13 @@ class TweetController extends Controller
     public function index()
     {
         // $foreginTweetUser = Tweet::orderBy('created_at', 'asc')->paginate(10);
-        $users = user::all();
-        $tweets = Tweet::all();
+        $tweets = Tweet::with('user')->get();
 
         // $tweetInfos = [];
         //username,content
-        $users = User::all()->keyBy('id');
-        $tweet_infos = $tweets->map(function ($tweet) use ($users) {
+        $tweet_infos = $tweets->map(function ($tweet) {
             return [
-                'user_name' => $users[$tweet->user_id]->name,
+                'user_name' => $tweet->user->name,
                 'content' => $tweet->content,
                 'created_at' => $tweet->created_at,
                 'liked_count' => $tweet->liked_count
