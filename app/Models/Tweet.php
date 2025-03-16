@@ -1,14 +1,14 @@
 <?php
 
-namespace app\Models;
+namespace App\Models;
 
-use Illuminate\database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tweet extends Model
 {
     //
+    protected $table = 'tweets';
     public $timestamps = false;
     use HasFactory;
-
 }
