@@ -7,6 +7,7 @@
 
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [TweetController::class, 'index'])->name('tweets.index');
 
@@ -20,3 +21,6 @@ Route::get('/', [TweetController::class, 'index'])->name('tweets.index');
 
 // カテゴリ管理用ルート
 Route::resource('categories', CategoryController::class);
+// ユーザー管理用ルート
+Route::resource('users', UserController::class);
+Route::post('users/login', [UserController::class, 'login'])->name('users.login');

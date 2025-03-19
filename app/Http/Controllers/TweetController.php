@@ -24,7 +24,8 @@ class TweetController extends Controller
                 'user_name' => $tweet->user->name,
                 'content' => $tweet->content,
                 'created_at' => $tweet->created_at,
-                'liked_count' => $tweet->liked_count
+                'liked_count' => $tweet->liked_count,
+                'category' => $tweet->category->name
             ];
         });
 
