@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FollowController;
 
 // 公開ルート
 Route::get('/', [TweetController::class, 'index'])->name('tweets.index');
@@ -57,6 +58,15 @@ Route::middleware('auth')->group(function () {
     // いいね機能
     Route::post('/tweets/{id}/like', [LikeController::class, 'store'])->name('tweets.like');
     Route::delete('/tweets/{id}/like', [LikeController::class, 'destroy'])->name('tweets.unlike');
+});
+
+// フォロー関連のルート
+Route::middleware(['auth'])->group(function () {
+    Route::post('/users/{user}/follow', [FollowController::class, 'follow'])->name('users.follow');
+    Route::delete('/users/{user}/unfollow', [FollowController::class, 'unfollow'])->name('users.unfollow');
+    Route::get('/users/{user}/following', [FollowController::class, 'following'])->name('users.following');
+    Route::get('/users/{user}/followers', [FollowController::class, 'followers'])->name('users.followers');
+    Route::get('/following-tweets', [FollowController::class, 'followingTweets'])->name('tweets.following');
 });
 
 // カテゴリ管理用ルート（管理者向け）

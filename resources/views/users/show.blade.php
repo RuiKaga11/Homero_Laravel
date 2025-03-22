@@ -12,8 +12,28 @@
                 <h2 class="fs-4 mb-1">{{ $user->name }}</h2>
                 <p class="text-muted mb-2">{{ '@' . strtolower(str_replace(' ', '', $user->name)) }}</p>
                 <p class="text-muted small mb-2">{{ $user->email }}</p>
+                
+                <div class="d-flex mb-2">
+                    <p class="me-3 mb-0">
+                        <a href="{{ route('users.following', $user) }}" class="text-decoration-none">
+                            <strong>{{ $user->follows->count() }}</strong> フォロー中
+                        </a>
+                    </p>
+                    <p class="mb-0">
+                        <a href="{{ route('users.followers', $user) }}" class="text-decoration-none">
+                            <strong>{{ $user->followers->count() }}</strong> フォロワー
+                        </a>
+                    </p>
+                </div>
+                
                 <p class="mb-2"><i class="fas fa-list"></i> <strong>{{ $tweets->count() }}</strong> ツイート</p>
             </div>
+            
+            @if(Auth::id() !== $user->id)
+                <div class="ms-auto">
+                    <x-follow-button :user="$user" />
+                </div>
+            @endif
         </div>
         
         @if (Auth::id() === $user->id)

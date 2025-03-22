@@ -17,6 +17,13 @@
                     <i class="fas fa-home"></i> ホーム
                 </a>
             </li>
+            
+            <!-- フォロータイムラインへのリンクを追加 -->
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('tweets.following') ? 'active' : '' }}" href="{{ route('tweets.following') }}">
+                    <i class="fas fa-users"></i> フォロー中
+                </a>
+            </li>
         </ul>
     </div>
     

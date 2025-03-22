@@ -238,13 +238,18 @@
                 </a>
             </div>
             <div class="col">
+                <a href="{{ route('tweets.following') }}" class="text-decoration-none {{ Route::is('tweets.following') ? 'text-primary' : 'text-muted' }}">
+                    <i class="fas fa-users fa-lg"></i>
+                </a>
+            </div>
+            <div class="col">
                 <a href="{{ route('tweets.create') }}" class="text-decoration-none {{ Route::is('tweets.create') ? 'text-primary' : 'text-muted' }}">
                     <i class="fas fa-pen-to-square fa-lg"></i>
                 </a>
             </div>
             @auth
             <div class="col">
-                <a href="{{ route('users.show', Auth::id()) }}" class="text-decoration-none {{ Route::is('users.show') && Auth::id() == request()->route('id') ? 'text-primary' : 'text-muted' }}">
+                <a href="{{ route('users.show', Auth::id()) }}" class="text-decoration-none {{ Route::is('users.show') && Auth::id() == request()->route('user') ? 'text-primary' : 'text-muted' }}">
                     <i class="fas fa-user fa-lg"></i>
                 </a>
             </div>
