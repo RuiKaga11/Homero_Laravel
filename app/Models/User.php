@@ -4,8 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class user extends Model
+class User extends Model
 {
     //
     public $timestamps = false;
+
+    public function tweets()
+    {
+        return $this->hasMany(User::class);
+    }
 }

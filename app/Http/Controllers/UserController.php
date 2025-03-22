@@ -3,23 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\user.php;
+use App\Models\User;
+use App\Http\Controllers\TweetController;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * ログインの可否
      */
     public function index()
     {
+        // @dd('dd');
+        return view('users.index');
         //
     }
 
+    public function login(Request $request){
+        $credentials = $request->validate([
+            'name' => ['required'],
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+        // @dd($credentials);
+        $results = User::where($credentials)->get();
+        // @dd($results);
+        if(!is_null($results)){
+            // 入力された値がDBに登録済みである
+            $request->session()->regenerate();
+            return redirect()->route('tweets.index')
+                ->with('success', 'カテゴリが正常に作成されました');
+        }else{
+
+        }
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.'
+        ]);
+    }
+
     /**
-     * Show the form for creating a new resource.
+     * アカウントの作成
      */
     public function create()
     {
+        return view('users.create');
         //
     }
 
