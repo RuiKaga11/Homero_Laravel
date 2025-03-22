@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カテゴリ新規作成 - Homero</title>
+    <title>ユーザー管理 - Homero</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- カスタムCSS -->
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
@@ -16,63 +18,89 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ route('tweets.index') }}">Homero</a>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('tweets.index') }}">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('users.index') }}">ユーザー管理</a>
-                    </li>
-                </ul>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('tweets.index') }}">ホーム</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ route('users.index') }}">ユーザー管理</a>
+                        </li>
+                        @auth
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    {{ Auth::user()->name }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ route('users.edit', ['user' => Auth::id()]) }}">プロフィール編集</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{{ route('logout') }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item">ログアウト</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">ログイン</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('users.create') }}">アカウント作成</a>
+                            </li>
+                        @endauth
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
 
-    <main class="container py-4">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>ログイン</h4>
-                    </div>
-                    <div class="card-body">
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        <form action="{{ route('users.login') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="name" class="form-label">ユーザー名</label>
-                                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
-                                <label for="name" class="form-label">メールアドレス</label>
-                                <input type="text" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
-                                <label for="name" class="form-label">パスワード</label>
-                                <input type="password" name="password" id="pass" class="form-control" value="{{ old('password') }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary">ログイン</button>
-                                <a href="{{ route('users.index') }}" class="btn btn-secondary">キャンセル</a>
-                            </div>
-                        </form>
-                    </div>
+    <div class="container">
+        <h1 class="my-4">ユーザー管理</h1>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">ログイン</h5>
                 </div>
             </div>
+            <div class="card-body">
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <x-form-input name="email" label="メールアドレス" type="email" :value="old('email')" required="true" autocomplete="email" autofocus="true" />
+                    <x-form-input name="password" label="パスワード" type="password" required="true" autocomplete="current-password" />
+
+                    <div class="mb-3 form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="remember">
+                            ログイン状態を保持する
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            ログイン
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </main>
+        
+        <div class="mt-4">
+            <a href="{{ route('users.create') }}" class="btn btn-success">新規アカウント作成</a>
+        </div>
+    </div>
 
     <footer class="mt-5 py-3 bg-light">
         <div class="container text-center">
             <p>&copy; {{ date('Y') }} Homero. All rights reserved.</p>
         </div>
     </footer>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

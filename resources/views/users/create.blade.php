@@ -1,76 +1,49 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アカウント新規作成 - Homero</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- カスタムCSS -->
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
-</head>
-<body>
-    <header class="mb-4">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{{ route('tweets.index') }}">Homero</a>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('tweets.index') }}">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('categories.index') }}">ユーザー作成</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+@extends('layouts.app')
 
-    <main class="container py-4">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>アカウント新規作成</h4>
+@section('title', 'アカウント作成')
+
+@section('content')
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h1 class="fs-4"><i class="fas fa-user-plus"></i> アカウント新規作成</h1>
+        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="fas fa-sign-in-alt"></i> ログイン
+        </a>
+    </div>
+
+    <div class="card tweet-card">
+        <div class="card-body">
+            <x-form-errors />
+
+            <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
+                @csrf
+
+                <div class="mb-4 text-center">
+                    <div class="mb-3">
+                        <img src="https://via.placeholder.com/100" alt="プロフィール画像" class="rounded-circle profile-image" style="width: 100px; height: 100px; object-fit: cover;">
                     </div>
-                    <div class="card-body">
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        <form action="{{ route('categories.store') }}" method="POST">
-                            @csrf
-                            {{-- アカウント登録入力 --}}
-                            <div class="mb-3">
-                                <label for="name" class="form-label">ユーザー名</label>
-                                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
-                            </div>
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary">登録</button>
-                                <a href="{{ route('categories.index') }}" class="btn btn-secondary">キャンセル</a>
-                            </div>
-                        </form>
+                    
+                    <div class="mb-2">
+                        <label for="profile_image" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            <i class="fas fa-camera"></i> プロフィール画像を選択
+                        </label>
+                        <input id="profile_image" type="file" name="profile_image" class="d-none" accept="image/*" onchange="previewImage(this)">
                     </div>
                 </div>
-            </div>
-        </div>
-    </main>
 
-    <footer class="mt-5 py-3 bg-light">
-        <div class="container text-center">
-            <p>&copy; {{ date('Y') }} Homero. All rights reserved.</p>
-        </div>
-    </footer>
+                <x-form-input name="name" label="名前" :value="old('name')" required="true" />
+                <x-form-input name="email" label="メールアドレス" type="email" :value="old('email')" required="true" />
+                <x-form-input name="password" label="パスワード" type="password" required="true" />
+                <x-form-input name="password_confirmation" label="パスワード（確認）" type="password" required="true" />
+                <div class="form-text mb-4">8文字以上で入力してください</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-user-check"></i> アカウント作成
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <x-image-preview-script />
+@endsection
