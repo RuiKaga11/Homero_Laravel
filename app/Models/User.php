@@ -11,6 +11,6 @@ class User extends Model
 
     public function tweets()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Tweet::class);
     }
 }
