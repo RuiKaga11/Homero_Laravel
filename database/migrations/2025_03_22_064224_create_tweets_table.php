@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedInteger('category_id');
             $table->string('content', 255);
             $table->integer('liked_count')->default(0);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             
             $table->foreign('category_id')
                   ->references('id')
