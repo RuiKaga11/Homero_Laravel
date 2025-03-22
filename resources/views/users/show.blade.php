@@ -3,10 +3,10 @@
 @section('title', $user->name . 'のプロフィール')
 
 @section('content')
-    <div class="profile-header">
+    <div class="profile-header mb-4">
         <div class="d-flex align-items-center">
             <div class="me-3">
-                <x-user-avatar :user="$user" size="80" />
+                <x-user-avatar :user="$user" :size="80" :fontSize="32" />
             </div>
             <div>
                 <h2 class="fs-4 mb-1">{{ $user->name }}</h2>

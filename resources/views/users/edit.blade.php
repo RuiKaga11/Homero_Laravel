@@ -20,17 +20,9 @@
 
                 <div class="mb-4 text-center">
                     <div class="mb-3 position-relative">
-                        @if($user->profile_image)
-                            <img src="{{ asset('storage/' . $user->profile_image) }}" 
-                                class="rounded-circle profile-image" 
-                                alt="{{ $user->name }}"
-                                style="width: 100px; height: 100px; object-fit: cover;">
-                        @else
-                            <div class="rounded-circle d-flex justify-content-center align-items-center profile-image"
-                                style="width: 100px; height: 100px; background-color: #{{ substr(md5($user->name), 0, 6) }};">
-                                <span class="text-white fw-bold" style="font-size: 40px;">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                            </div>
-                        @endif
+                        <div class="mx-auto" style="width: 100px; height: 100px;">
+                            <x-user-avatar :user="$user" :size="100" :fontSize="40" />
+                        </div>
                         
                         <label for="profile_image" class="profile-image-overlay position-absolute top-0 start-50 translate-middle-x" style="width: 100px; height: 100px; cursor: pointer; background: rgba(0, 0, 0, 0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center;">
                             <i class="fas fa-camera text-white" style="font-size: 28px;"></i>
@@ -57,13 +49,13 @@
 
 @section('styles')
 <style>
-    .profile-image-overlay {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .position-relative:hover .profile-image-overlay {
-        opacity: 1;
-    }
+.profile-image-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.position-relative:hover .profile-image-overlay {
+    opacity: 1;
+}
 </style>
 @endsection

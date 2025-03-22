@@ -24,14 +24,14 @@
         <div class="d-flex">
             <div class="me-3">
                 <a href="{{ route('users.show', $tweet->user_id) }}" class="text-decoration-none">
-                    <x-user-avatar :user="$tweet->user" size="48" />
+                    <x-user-avatar :user="$tweet->user" :size="50" :fontSize="20" />
                 </a>
             </div>
             <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h5 class="mb-0">
-                            <a href="{{ route('users.show', $tweet->user_id) }}" class="text-decoration-none">
+                            <a href="{{ route('users.show', $tweet->user_id) }}" class="text-decoration-none text-dark">
                                 {{ $tweet->user->name }}
                             </a>
                         </h5>
