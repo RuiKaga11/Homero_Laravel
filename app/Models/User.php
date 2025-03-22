@@ -64,4 +64,21 @@ class User extends Authenticatable
     {
         return $this->followers()->where('follower_id', $user->id)->exists();
     }
+
+    /**
+     * ユーザーがツイートをいいねしているかチェック
+     */
+    public function hasLiked(Tweet $tweet)
+    {
+        return $this->likes()->where('tweet_id', $tweet->id)->exists();
+    }
+
+    /**
+     * このユーザーがフォローしているユーザー
+     * (メソッド名の統一のために追加)
+     */
+    public function following()
+    {
+        return $this->follows();
+    }
 }

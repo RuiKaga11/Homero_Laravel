@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TweetController;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Tweet;
 
 class UserController extends Controller
 {
@@ -82,10 +83,15 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
         $user = User::findOrFail($id);
-        $tweets = $user->tweets()->with('category')->latest()->get();
+        $tweets = $user->tweets()->withBasicRelations()->latest()->paginate(10);
+        
+        // 非ログイン時はInstagramスタイルのポップアップ表示
+        if (!Auth::check()) {
+            return view('users.profile-popup', compact('user', 'tweets'));
+        }
         
         return view('users.show', compact('user', 'tweets'));
     }
@@ -157,5 +163,32 @@ class UserController extends Controller
         $user->delete();
 
         return redirect('/');
+    }
+
+    /**
+     * ユーザーのツイートを無限スクロールで読み込む
+     */
+    public function loadMoreTweets(Request $request, $id)
+    {
+        $page = $request->input('page', 1);
+        $user = User::findOrFail($id);
+        
+        $tweets = $user->tweets()
+                    ->withBasicRelations()
+                    ->latest()
+                    ->paginate(15, ['*'], 'page', $page);
+        
+        $html = '';
+        foreach ($tweets as $tweet) {
+            $html .= view('components.tweet-card', [
+                'tweet' => $tweet,
+                'showControls' => auth()->check() && auth()->id() === $tweet->user_id
+            ])->render();
+        }
+        
+        return response()->json([
+            'html' => $html,
+            'nextPage' => $tweets->hasMorePages() ? $page + 1 : null,
+        ]);
     }
 }

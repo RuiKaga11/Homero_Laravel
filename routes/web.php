@@ -12,8 +12,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FollowController;
 
-// 公開ルート
-Route::get('/', [TweetController::class, 'index'])->name('tweets.index');
+// トップページのルート
+Route::get('/', [TweetController::class, 'index'])->name('home');
+
+// ツイート一覧ページのルート
+Route::get('/tweets', [TweetController::class, 'index'])->name('tweets.index');
 
 // 認証ルート
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -25,8 +28,6 @@ Route::get('/register', [UserController::class, 'create'])->name('register');
 Route::post('/register', [UserController::class, 'store'])->name('register.store');
 
 // users/*ルートの修正
-Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-Route::post('/users', [UserController::class, 'store'])->name('users.store');
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
 // ユーザープロフィール
@@ -41,12 +42,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/tweets/create', [TweetController::class, 'create'])->name('tweets.create');
     Route::post('/tweets', [TweetController::class, 'store'])->name('tweets.store');
     
-    // 追加: ツイート詳細表示ルート
-    Route::get('/tweets/{id}', [TweetController::class, 'show'])->name('tweets.show');
+    // ※重要: 無限スクロール用APIを先に定義！
+    Route::get('/tweets/load-more', [TweetController::class, 'loadMore'])->name('tweets.load-more');
     
+    // その後に動的パラメータを含むルートを定義
+    Route::get('/tweets/{id}', [TweetController::class, 'show'])->name('tweets.show');
     Route::get('/tweets/{id}/edit', [TweetController::class, 'edit'])->name('tweets.edit');
     Route::put('/tweets/{id}', [TweetController::class, 'update'])->name('tweets.update');
     Route::delete('/tweets/{id}', [TweetController::class, 'destroy'])->name('tweets.destroy');
+    
+    // 返信機能のルート
+    Route::post('/tweets/{id}/response', [TweetController::class, 'response'])->name('tweets.response');
     
     // プロフィール編集
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -58,6 +64,11 @@ Route::middleware('auth')->group(function () {
     // いいね機能
     Route::post('/tweets/{id}/like', [LikeController::class, 'store'])->name('tweets.like');
     Route::delete('/tweets/{id}/like', [LikeController::class, 'destroy'])->name('tweets.unlike');
+    
+    // 無限スクロール用の追加API
+    Route::get('/tweets/{id}/responses/load-more', [TweetController::class, 'loadMoreResponses'])->name('tweets.responses.load-more');
+    Route::get('/users/{id}/tweets/load-more', [UserController::class, 'loadMoreTweets'])->name('users.tweets.load-more');
+    Route::get('/following-tweets/load-more', [FollowController::class, 'loadMoreFollowingTweets'])->name('following.tweets.load-more');
 });
 
 // フォロー関連のルート
@@ -83,3 +94,11 @@ Route::resource('categories', CategoryController::class);
 // ユーザー管理用ルート
 Route::resource('users', UserController::class)->except(['destroy']);
 Route::post('users/login', [UserController::class, 'login'])->name('users.login');
+
+// その他のuserパスはホームにリダイレクト
+Route::get('/user', function() {
+    return redirect()->route('home');
+});
+Route::get('/users', function() {
+    return redirect()->route('home');
+});

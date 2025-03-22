@@ -90,10 +90,6 @@
                 </form>
             </div>
         </div>
-        
-        <div class="mt-4">
-            <a href="{{ route('users.create') }}" class="btn btn-success">新規アカウント作成</a>
-        </div>
     </div>
 
     <footer class="mt-5 py-3 bg-light">

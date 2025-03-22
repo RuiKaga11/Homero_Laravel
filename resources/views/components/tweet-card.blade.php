@@ -2,6 +2,25 @@
 
 <div class="card mb-3 tweet-card">
     <div class="card-body">
+        <!-- 返信ツイートの場合、元ツイートへの参照を表示 -->
+        @if($tweet->respondedToTweets()->exists())
+            <div class="response-reference mb-2">
+                <small class="text-muted">
+                    <i class="fas fa-reply me-1"></i>
+                    @php
+                        $originalTweet = $tweet->respondedToTweets()->first();
+                    @endphp
+                    @if($originalTweet)
+                        <a href="{{ route('tweets.show', $originalTweet->id) }}" class="text-decoration-none">
+                            {{ $originalTweet->user->name }}さんのツイートへの返信
+                        </a>
+                    @else
+                        <span class="text-muted">返信元のツイートは削除されました</span>
+                    @endif
+                </small>
+            </div>
+        @endif
+
         <div class="d-flex">
             <div class="me-3">
                 <a href="{{ route('users.show', $tweet->user_id) }}" class="text-decoration-none">
@@ -56,16 +75,30 @@
                     <div class="tweet-actions d-flex justify-content-between w-100 mt-2">
                         <!-- コメントボタン -->
                         <div class="action-icon">
-                            <a href="{{ route('tweets.show', $tweet->id) }}" class="btn btn-link p-0 text-secondary">
-                                <i class="far fa-comment"></i>
-                            </a>
+                            @auth
+                                <a href="{{ route('tweets.show', $tweet->id) }}" class="btn btn-link p-0 text-secondary">
+                                    <i class="far fa-comment"></i>
+                                    <span class="small ms-1">{{ $tweet->response_tweets_count ?? 0 }}</span>
+                                </a>
+                            @else
+                                <span class="btn btn-link p-0 text-secondary login-required">
+                                    <i class="far fa-comment"></i>
+                                    <span class="small ms-1">{{ $tweet->response_tweets_count ?? 0 }}</span>
+                                </span>
+                            @endauth
                         </div>
                         
                         <!-- リツイートボタン -->
                         <div class="action-icon">
-                            <button class="btn btn-link p-0 text-secondary">
-                                <i class="fas fa-retweet"></i>
-                            </button>
+                            @auth
+                                <button class="btn btn-link p-0 text-secondary">
+                                    <i class="fas fa-retweet"></i>
+                                </button>
+                            @else
+                                <span class="btn btn-link p-0 text-secondary login-required">
+                                    <i class="fas fa-retweet"></i>
+                                </span>
+                            @endauth
                         </div>
                         
                         <!-- いいねボタン -->
@@ -75,9 +108,15 @@
                         
                         <!-- シェアボタン -->
                         <div class="action-icon">
-                            <button class="btn btn-link p-0 text-secondary">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
+                            @auth
+                                <button class="btn btn-link p-0 text-secondary">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            @else
+                                <span class="btn btn-link p-0 text-secondary login-required">
+                                    <i class="fas fa-share-alt"></i>
+                                </span>
+                            @endauth
                         </div>
                     </div>
                 </div>

@@ -75,10 +75,5 @@
                 </li>
             </ul>
         </div>
-    @else
-        <div class="d-grid gap-2">
-            <a href="{{ route('login') }}" class="btn btn-primary rounded-pill">ログイン</a>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary rounded-pill">アカウント作成</a>
-        </div>
     @endauth
 </div>

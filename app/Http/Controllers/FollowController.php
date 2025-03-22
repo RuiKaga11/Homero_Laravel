@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Tweet;
 
 class FollowController extends Controller
 {
@@ -72,14 +73,42 @@ class FollowController extends Controller
      */
     public function followingTweets()
     {
-        $followingIds = Auth::user()->follows()->pluck('users.id')->toArray();
+        $user = Auth::user();
+        $followingIds = $user->follows()->pluck('users.id');
         
-        // フォロー中のユーザーとログインユーザー自身のツイートを取得
-        $tweets = \App\Models\Tweet::with(['user', 'category', 'likes'])
-            ->whereIn('user_id', $followingIds)
-            ->latest()
-            ->paginate(20);
-            
+        $tweets = Tweet::whereIn('user_id', $followingIds)
+                    ->withBasicRelations()
+                    ->latest()
+                    ->paginate(10);
+        
         return view('tweets.following', compact('tweets'));
+    }
+
+    /**
+     * フォロー中ユーザーのツイートを無限スクロールで読み込む
+     */
+    public function loadMoreFollowingTweets(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $user = Auth::user();
+        $followingIds = $user->follows()->pluck('users.id');
+        
+        $tweets = Tweet::whereIn('user_id', $followingIds)
+                    ->withBasicRelations()
+                    ->latest()
+                    ->paginate(15, ['*'], 'page', $page);
+        
+        $html = '';
+        foreach ($tweets as $tweet) {
+            $html .= view('components.tweet-card', [
+                'tweet' => $tweet,
+                'showControls' => auth()->id() === $tweet->user_id
+            ])->render();
+        }
+        
+        return response()->json([
+            'html' => $html,
+            'nextPage' => $tweets->hasMorePages() ? $page + 1 : null,
+        ]);
     }
 } 

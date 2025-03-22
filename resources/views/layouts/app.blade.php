@@ -328,6 +328,15 @@
                     .catch(error => console.error('Error:', error));
                 });
             });
+            
+            // 未ログインユーザー向けのボタン処理
+            const loginRequiredButtons = document.querySelectorAll('.login-required');
+            loginRequiredButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 確認ダイアログをなくして直接リダイレクト
+                    window.location.href = '{{ route('login') }}';
+                });
+            });
         });
     </script>
     

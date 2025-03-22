@@ -14,29 +14,17 @@ class TweetController extends Controller
      */
     public function index()
     {
-        $tweets = Tweet::with(['user', 'category', 'likes'])->latest()->get();
-
-        $tweet_infos = $tweets->map(function ($tweet) {
-            $data = [
-                'id' => $tweet->id,
-                'user_id' => $tweet->user_id,
-                'user_name' => $tweet->user->name,
-                'user_profile_image' => $tweet->user->profile_image,
-                'content' => $tweet->content,
-                'created_at' => $tweet->created_at,
-                'liked_count' => $tweet->likes->count(),
-                'category' => $tweet->category->name
-            ];
-            
-            // ログインしている場合は、現在のユーザーがいいねしているかどうかの情報を追加
-            if (Auth::check()) {
-                $data['user_has_liked'] = $tweet->likes->contains('user_id', Auth::id());
-            }
-            
-            return $data;
-        });
-
-        return view('startpage.Tweet', compact('tweet_infos'));
+        // 非ログイン時は最新10件のみを表示し、ページネーションなし
+        if (!auth()->check()) {
+            $tweets = Tweet::withBasicRelations()
+                        ->latest()
+                        ->take(10)
+                        ->get();
+            return view('welcome', compact('tweets'));
+        }
+        
+        // ログイン済みの場合はfeedメソッドにリダイレクト
+        return redirect()->route('tweets.feed');
     }
 
     /**
@@ -68,8 +56,15 @@ class TweetController extends Controller
      */
     public function show(string $id)
     {
-        $tweet = Tweet::with(['user', 'category'])->findOrFail($id);
-        return view('tweets.show', compact('tweet'));
+        $tweet = Tweet::withBasicRelations()
+                    ->findOrFail($id);
+        
+        $responses = $tweet->responseTweets()
+                    ->withBasicRelations()
+                    ->latest()
+                    ->get();
+        
+        return view('tweets.show', compact('tweet', 'responses'));
     }
 
     /**
@@ -109,6 +104,12 @@ class TweetController extends Controller
 
         $tweet->update($validated);
 
+        // このツイートが返信の場合、元のツイート詳細ページにリダイレクト
+        $respondedToTweet = $tweet->respondedToTweets()->first();
+        if ($respondedToTweet) {
+            return redirect()->route('tweets.show', $respondedToTweet->id);
+        }
+
         return redirect()->route('tweets.feed');
     }
 
@@ -125,22 +126,112 @@ class TweetController extends Controller
                 ->with('error', '他のユーザーのツイートは削除できません');
         }
         
+        // このツイートが返信の場合は、元のツイートIDを取得
+        $originalTweetId = null;
+        $respondedToTweet = $tweet->respondedToTweets()->first();
+        if ($respondedToTweet) {
+            $originalTweetId = $respondedToTweet->id;
+        }
+        
         $tweet->delete();
         
-        // リファラー（前のページ）をチェックし、そこに戻る
+        // 返信だった場合は元のツイート詳細ページに戻る
+        if ($originalTweetId) {
+            return redirect()->route('tweets.show', $originalTweetId);
+        }
+        
+        // それ以外の場合はリファラーに戻る
         $referer = $request->headers->get('referer');
         return redirect($referer);
     }
 
-    // ツイート一覧表示（ログイン後）
+    /**
+     * Display feed of tweets.
+     */
     public function feed()
     {
-        $tweets = Tweet::with(['user', 'category', 'likes'])
-            ->latest()
-            ->get();
-            
         $user = Auth::user();
-        
+        $tweets = Tweet::withBasicRelations()
+                    ->latest()
+                    ->paginate(10);
+                    
         return view('tweets.feed', compact('tweets', 'user'));
+    }
+
+    /**
+     * 返信の保存
+     */
+    public function response(Request $request, $id)
+    {
+        $tweet = Tweet::findOrFail($id);
+        
+        $validated = $request->validate([
+            'content' => ['required', 'string', 'max:255'],
+        ]);
+        
+        // 新しいツイートを作成
+        $responseTweet = new Tweet();
+        $responseTweet->user_id = Auth::id();
+        $responseTweet->content = $validated['content'];
+        $responseTweet->category_id = $tweet->category_id;
+        $responseTweet->save();
+        
+        // 中間テーブルに関連を保存
+        $tweet->responseTweets()->attach($responseTweet->id);
+        
+        return redirect()->route('tweets.show', $tweet->id);
+    }
+
+    /**
+     * ページネーション用のツイートをJSONで返す
+     */
+    public function loadMore(Request $request)
+    {
+        $page = $request->input('page', 1);
+        
+        // 1回のロードで15件に変更（現在は10件）
+        $tweets = Tweet::withBasicRelations()
+                    ->latest()
+                    ->paginate(15, ['*'], 'page', $page);
+        
+        $html = '';
+        foreach ($tweets as $tweet) {
+            $html .= view('components.tweet-card', [
+                'tweet' => $tweet,
+                'showControls' => auth()->check() && auth()->id() === $tweet->user_id
+            ])->render();
+        }
+        
+        return response()->json([
+            'html' => $html,
+            'nextPage' => $tweets->hasMorePages() ? $page + 1 : null,
+        ]);
+    }
+
+    /**
+     * ツイート詳細ページの返信を無限スクロールで読み込む
+     */
+    public function loadMoreResponses(Request $request, $id)
+    {
+        $page = $request->input('page', 1);
+        $tweet = Tweet::findOrFail($id);
+        
+        $responses = $tweet->responseTweets()
+                    ->withBasicRelations()
+                    ->latest()
+                    ->paginate(15, ['*'], 'page', $page);
+        
+        $html = '';
+        foreach ($responses as $response) {
+            $html .= view('components.tweet-card', [
+                'tweet' => $response,
+                'showControls' => auth()->check() && auth()->id() === $response->user_id
+            ])->render();
+        }
+        
+        return response()->json([
+            'html' => $html,
+            'nextPage' => $responses->hasMorePages() ? $page + 1 : null,
+        ]);
     }
 }

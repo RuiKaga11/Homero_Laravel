@@ -51,15 +51,26 @@
     <div class="tweets-container">
         <h3 class="fs-5 mb-3"><i class="fas fa-feather"></i> {{ $user->name }}のツイート</h3>
         
-        @foreach ($tweets as $tweet)
-            <x-tweet-card :tweet="$tweet" :showControls="Auth::id() === $user->id" />
-        @endforeach
+        <div id="tweets-container">
+            @foreach ($tweets as $tweet)
+                <x-tweet-card :tweet="$tweet" :showControls="Auth::id() === $user->id" />
+            @endforeach
+            
+            @if ($tweets->isEmpty())
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> ツイートがありません。
+                </div>
+            @endif
+        </div>
         
-        @if ($tweets->isEmpty())
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> ツイートがありません。
+        <div id="loading-indicator" class="text-center my-4 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">読み込み中...</span>
             </div>
-        @endif
+            <p class="mt-2">ツイートを読み込み中...</p>
+        </div>
+        
+        <div id="sentinel" class="pb-4"></div>
     </div>
     
     <!-- アカウント削除確認モーダル -->
@@ -75,5 +86,57 @@
 
 @section('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    let nextPage = 2;
+    let loading = false;
+    
+    const tweetsContainer = document.getElementById('tweets-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const sentinel = document.getElementById('sentinel');
+    
+    // 要素がなければ終了（ツイートがない場合など）
+    if (!tweetsContainer || !sentinel) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !loading && nextPage !== null) {
+                loadMoreTweets();
+            }
+        });
+    }, {
+        rootMargin: '0px 0px 100px 0px'
+    });
+    
+    observer.observe(sentinel);
+    
+    function loadMoreTweets() {
+        loading = true;
+        loadingIndicator.classList.remove('d-none');
+        
+        const userId = '{{ $user->id }}';
+        
+        fetch(`/users/${userId}/tweets/load-more?page=${nextPage}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    tweetsContainer.insertAdjacentHTML('beforeend', data.html);
+                }
+                
+                nextPage = data.nextPage;
+                
+                if (nextPage === null) {
+                    observer.disconnect();
+                }
+                
+                loadingIndicator.classList.add('d-none');
+                loading = false;
+            })
+            .catch(error => {
+                console.error('ツイートの読み込みエラー:', error);
+                loadingIndicator.innerHTML = '<p class="text-danger my-4">読み込みエラーが発生しました。再読み込みしてください。</p>';
+                loading = false;
+            });
+    }
+});
 </script>
 @endsection

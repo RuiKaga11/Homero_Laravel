@@ -15,9 +15,6 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Route::is('login') ? 'active' : '' }}" href="{{ route('login') }}">ログイン</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Route::is('users.create') ? 'active' : '' }}" href="{{ route('users.create') }}">アカウント作成</a>
-                        </li>
                     @else
                         <!-- ログイン時のナビゲーション -->
                         <li class="nav-item">
