@@ -15,6 +15,9 @@ use App\Http\Controllers\FollowController;
 // トップページのルート
 Route::get('/', [TweetController::class, 'index'])->name('home');
 
+// 未認証ユーザー向けツイート一覧ページ（別のパスで定義）
+// Route::get('/public-tweets', [TweetController::class, 'index'])->name('tweets.index');
+
 // ツイート一覧ページのルート
 Route::get('/tweets', [TweetController::class, 'index'])->name('tweets.index');
 
@@ -35,7 +38,7 @@ Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 
 // 認証済みユーザーのみアクセス可能なルート
 Route::middleware('auth')->group(function () {
-    // ツイートフィード
+    // ツイートフィード（認証済みユーザー向け）
     Route::get('/tweets', [TweetController::class, 'feed'])->name('tweets.feed');
     
     // ツイート管理
