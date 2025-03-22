@@ -288,12 +288,16 @@
                     // いいねボタンのスタイルを即座に変更（楽観的UI更新）
                     if (isLiked) {
                         button.classList.remove('liked');
+                        button.classList.remove('text-danger');
+                        button.classList.add('text-secondary');
                         icon.classList.replace('fas', 'far');
                         if (countElement) {
                             countElement.textContent = parseInt(countElement.textContent) - 1;
                         }
                     } else {
                         button.classList.add('liked');
+                        button.classList.remove('text-secondary');
+                        button.classList.add('text-danger');
                         icon.classList.replace('far', 'fas');
                         if (countElement) {
                             countElement.textContent = parseInt(countElement.textContent) + 1;
@@ -309,63 +313,19 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'Accept': 'application/json'
                         },
                         credentials: 'same-origin'
                     })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        // サーバーからの正確な値で更新
-                        if (countElement) {
-                            countElement.textContent = data.likes_count;
+                        if (data.status === 'success') {
+                            if (countElement) {
+                                countElement.textContent = data.likes_count;
+                            }
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        // エラー時は元の状態に戻す
-                        if (isLiked) {
-                            button.classList.add('liked');
-                            icon.classList.replace('far', 'fas');
-                            if (countElement) {
-                                countElement.textContent = parseInt(countElement.textContent) + 1;
-                            }
-                        } else {
-                            button.classList.remove('liked');
-                            icon.classList.replace('fas', 'far');
-                            if (countElement) {
-                                countElement.textContent = parseInt(countElement.textContent) - 1;
-                            }
-                        }
-                        container.dataset.liked = isLiked ? 'true' : 'false';
-                        
-                        // エラーメッセージを表示
-                        const errorToast = document.createElement('div');
-                        errorToast.className = 'toast align-items-center bg-danger text-white position-fixed bottom-0 end-0 m-3';
-                        errorToast.setAttribute('role', 'alert');
-                        errorToast.setAttribute('aria-live', 'assertive');
-                        errorToast.setAttribute('aria-atomic', 'true');
-                        errorToast.innerHTML = `
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    いいねの処理中にエラーが発生しました。
-                                </div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        `;
-                        document.body.appendChild(errorToast);
-                        const toast = new bootstrap.Toast(errorToast);
-                        toast.show();
-                        
-                        setTimeout(() => {
-                            errorToast.remove();
-                        }, 3000);
-                    });
+                    .catch(error => console.error('Error:', error));
                 });
             });
         });
