@@ -35,8 +35,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('categories.index')
-            ->with('success', 'カテゴリが正常に作成されました');
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -58,8 +57,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories.index')
-            ->with('success', 'カテゴリが正常に更新されました');
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -75,7 +73,6 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return redirect()->route('categories.index')
-            ->with('success', 'カテゴリが正常に削除されました');
+        return redirect()->route('categories.index');
     }
 }
