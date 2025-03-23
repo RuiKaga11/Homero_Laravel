@@ -24,3 +24,9 @@ Route::resource('categories', CategoryController::class);
 // ユーザー管理用ルート
 Route::resource('users', UserController::class);
 Route::post('users/login', [UserController::class, 'login'])->name('users.login');
+Route::post('users/create', [UserController::class, 'create'])->name('users.create');
+Route::post('users/store', [UserController::class, 'store'])->name('users.store');
+
+// ウェルカムページルート
+// Route::post('users/create', [UserController::class, 'create'])->name('users.create');
+

@@ -13,4 +13,11 @@ class User extends Model
     {
         return $this->hasMany(Tweet::class);
     }
+
+    protected $fillable = [
+        'name', // 追加
+        'email',
+        'password',
+    ];
+
 }

@@ -20,9 +20,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('tweets.index') }}">ホーム</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('categories.index') }}">ユーザー作成</a>
-                    </li>
                 </ul>
             </div>
         </nav>
@@ -46,7 +43,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('categories.store') }}" method="POST">
+                        <form action="{{ route('users.store') }}" method="POST">
                             @csrf
                             {{-- アカウント登録入力 --}}
                             <div class="mb-3">
@@ -54,8 +51,20 @@
                                 <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
                             </div>
                             <div class="mb-3">
+                                <label for="name" class="form-label">メールアドレス</label>
+                                <input type="text" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">パスワード</label>
+                                <input type="password" name="password" id="password" class="form-control" value="{{ old('password') }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">パスワード（確認）</label>
+                                <input type="password" name="password_confirmation" id="password" class="form-control" value="{{ old('password') }}" required>
+                            </div>
+                            <div class="mb-3">
                                 <button type="submit" class="btn btn-primary">登録</button>
-                                <a href="{{ route('categories.index') }}" class="btn btn-secondary">キャンセル</a>
+                                <a href="{{ route('tweets.index') }}" class="btn btn-secondary">キャンセル</a>
                             </div>
                         </form>
                     </div>

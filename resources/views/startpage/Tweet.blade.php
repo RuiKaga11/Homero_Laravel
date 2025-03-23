@@ -28,6 +28,19 @@
         </nav>
     </header>
     
+    <div class="tweeting">
+        {{-- カテゴリgetAll、ユーザー名をcookieで取得、本文。3つをくっつけてmodelに投げる --}}
+        <form>
+            @csrf
+            <div class="mb-3">
+                <input type="text" name="tweet" id="tweet" class="form-control" value="{{ old('name') }}" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">ツイート</button>
+            </div>
+        </form>
+    </div>
+
     <div class="tweets-container">
         {{-- @dd($tweet_infos); --}}
         @foreach ($tweet_infos as $tweet)

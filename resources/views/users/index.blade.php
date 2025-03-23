@@ -51,10 +51,19 @@
                             <div class="mb-3">
                                 <label for="name" class="form-label">ユーザー名</label>
                                 <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="name" class="form-label">メールアドレス</label>
                                 <input type="text" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                            </div>
+                            <div class="mb-3">
+
                                 <label for="name" class="form-label">パスワード</label>
                                 <input type="password" name="password" id="pass" class="form-control" value="{{ old('password') }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">パスワード（確認）</label>
+                                <input type="password" name="password_confirmation" id="password" class="form-control" value="{{ old('password') }}" required>
                             </div>
                             <div class="mb-3">
                                 <button type="submit" class="btn btn-primary">ログイン</button>

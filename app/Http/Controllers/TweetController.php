@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tweet;
-use App\Models\user;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class TweetController extends Controller
@@ -14,11 +16,12 @@ class TweetController extends Controller
      */
     public function index()
     {
-        // $foreginTweetUser = Tweet::orderBy('created_at', 'asc')->paginate(10);
+        // ログインセッションがなければ、welcomeページに遷移
+        if(!auth()->check()){
+            return view('welcome');
+        }
+        //　ツイート全件取得
         $tweets = Tweet::with('user')->get();
-
-        // $tweetInfos = [];
-        //username,content
         $tweet_infos = $tweets->map(function ($tweet) {
             return [
                 'user_name' => $tweet->user->name,
