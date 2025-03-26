@@ -17,3 +17,27 @@ button#nice:hover{
     border-radius: 10px;
 }
 
+
+/* アバター関連のスタイル */
+.user-avatar-placeholder,
+.user-avatar-placeholder *,
+.user-avatar {
+    outline: none !important;
+    border: none !important;
+}
+
+.rounded-circle a:focus,
+.rounded-circle a:active,
+.user-avatar-placeholder a:focus,
+.user-avatar-placeholder a:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* フォロー関連ページでの特別な修正 */
+.list-group-item a:focus,
+.list-group-item a:active {
+    outline: none !important;
+}
+
