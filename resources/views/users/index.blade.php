@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カテゴリ新規作成 - Homero</title>
+    <title>ログイン - Homero</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,9 +19,6 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('tweets.index') }}">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('users.index') }}">ユーザー管理</a>
                     </li>
                 </ul>
             </div>
@@ -46,7 +43,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('users.login') }}" method="POST">
+                        <form action="{{ route('login') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label">ユーザー名</label>
@@ -59,11 +56,11 @@
                             <div class="mb-3">
 
                                 <label for="name" class="form-label">パスワード</label>
-                                <input type="password" name="password" id="pass" class="form-control" value="{{ old('password') }}" required>
+                                <input type="password" name="password" id="pass" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">パスワード（確認）</label>
-                                <input type="password" name="password_confirmation" id="password" class="form-control" value="{{ old('password') }}" required>
+                                <input type="password" name="password_confirmation" id="password" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <button type="submit" class="btn btn-primary">ログイン</button>

@@ -18,7 +18,14 @@
             <div class="container">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('users.index') }}">ログイン</a>
+                        {{-- <a class="nav-link" href="{{ route('users.index') }}">ログイン</a> --}}
+                        @auth
+                        {{-- <p>ようこそ、{{ Auth::user()->name }} さん！</p> --}}
+                        <a href="{{ route('logout') }}">ログアウト</a>
+                        @else
+                        {{-- <p>ログインしてください。</p> --}}
+                        <a href="{{ route('login') }}">ログイン</a>
+                        @endauth
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('users.create') }}">アカウント作成</a>
@@ -28,8 +35,14 @@
         </nav>
     </header>
     
+    @auth
+    <p>ようこそ、{{ Auth::user()->name }} さん！</p>
+    @else
+    @endauth
+
+    @auth
     <div class="tweeting">
-        {{-- カテゴリgetAll、ユーザー名をcookieで取得、本文。3つをくっつけてmodelに投げる --}}
+        {{-- カテゴリgetAll、ユーザー名をauth()で取得、本文。3つをくっつけてコントローラーに投げる --}}
         <form>
             @csrf
             <div class="mb-3">
@@ -40,6 +53,9 @@
             </div>
         </form>
     </div>
+    @else
+    @endauth
+
 
     <div class="tweets-container">
         {{-- @dd($tweet_infos); --}}

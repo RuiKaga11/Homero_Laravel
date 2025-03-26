@@ -26,30 +26,13 @@ class UserController extends Controller
         $credentials = $request->validate([
             'name' => ['required'],
             'email' => ['required', 'email'],
-            'password' =>  ['required', 'confirmed', Password::defaults()]
+            'password' =>  ['required']
         ]);
-        // @dd($credentials);
-
-        // $user = User::where('password', $credentials['password'])->first();
-        // // $results = User::where($credentials)->get();
-
-        // @dd($user);
-        // if ($user && Hash::check($credentials['password'], $user->password)) {
-        //     Auth::login($user);
-        //     return redirect()->intended('tweets.index');
-        // }else{
-        //     return view('users.index');
-        // }
-
 
         $results = User::where($credentials)->get();
         @dd($results);
         if(!is_null($results)){
             // 入力された値がDBに登録済みである
-            //　完了）cookieにユーザー名を登録
-            // →ツイートに反映したい。（ツイートのフォームを作るところから）
-            // $firstResult = $results->first();
-            // Cookie::queue('user_name',  $firstResult->name, 60); 
             Auth::login($results);
             $request->session()->regenerate();
             $userName = Cookie::get('user_name');
@@ -78,8 +61,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-                // ユーザー登録
+        // ユーザー登録
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
