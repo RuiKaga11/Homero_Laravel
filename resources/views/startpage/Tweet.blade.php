@@ -22,13 +22,14 @@
                         @auth
                         {{-- <p>ようこそ、{{ Auth::user()->name }} さん！</p> --}}
                         <a href="{{ route('logout') }}">ログアウト</a>
+                        <a href="{{ route('categories.index') }}">カテゴリー管理</a>
                         @else
                         {{-- <p>ログインしてください。</p> --}}
                         <a href="{{ route('login') }}">ログイン</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.create') }}">アカウント作成</a>
+                        </li>
                         @endauth
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('users.create') }}">アカウント作成</a>
                     </li>
                 </ul>
             </div>
@@ -43,10 +44,18 @@
     @auth
     <div class="tweeting">
         {{-- カテゴリgetAll、ユーザー名をauth()で取得、本文。3つをくっつけてコントローラーに投げる --}}
-        <form>
+        <form action="{{ route('store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <input type="text" name="tweet" id="tweet" class="form-control" value="{{ old('name') }}" required>
+                <input type="hidden" name="user_id" value={{Auth::id()}}>
+                <input type="text" name="content" id="content" class="form-control" required>
+            </div>
+            <div class="mb-3">
+            <select name="category_id">
+                @foreach ($categories as $category)
+                   <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
             </div>
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary">ツイート</button>

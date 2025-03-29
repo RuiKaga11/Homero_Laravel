@@ -10,6 +10,7 @@
   <body>
 
     <h1>Homero</h1>
+    @dd($validated);
 
     <form action="php\controler\login.php" method="post">
         <div>

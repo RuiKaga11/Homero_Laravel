@@ -32,10 +32,9 @@ Route::post('users/store', [UserController::class, 'store'])->name('users.store'
 // ログイン関連
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
 Route::get('/home', [TweetController::class, 'index'])->name('home');
 
+// ツイート関連
+Route::post('store', [TweetController::class, 'store'])->name('store');
 
-// ウェルカムページルート
-// Route::post('users/create', [UserController::class, 'create'])->name('users.create');
 

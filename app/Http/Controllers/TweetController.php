@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Tweet;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -32,7 +33,8 @@ class TweetController extends Controller
             ];
         });
 
-        return view('startpage.Tweet', compact('tweet_infos'));
+        $categories = Category::all();
+        return view('startpage.Tweet', compact('tweet_infos','categories'));
         // return view('startpage.Tweet', compact('tweets'));
     }
 
@@ -49,7 +51,15 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //ツイートを作成する機能
+        $validated = $request->validate([
+            'user_id' => ['required', 'int', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'content' => ['required', 'string', 'max:255'],
+        ]);
+        Auth::user()->tweets()->create($validated);
+
+        return redirect()->route('tweets.index');
     }
 
     /**

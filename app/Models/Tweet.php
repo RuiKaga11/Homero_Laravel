@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Tweet extends Model
 {
     //
-    protected $table = 'tweets';
-    public $timestamps = false;
+    protected $table = 'tweets'; 
+    protected $fillable = ['user_id', 'category_id', 'content'];
+    // public $timestamps = false;
     use HasFactory;
 
     // ユーザーとのリレーションを定義
